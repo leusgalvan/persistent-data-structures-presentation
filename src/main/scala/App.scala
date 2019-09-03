@@ -26,19 +26,10 @@ object App {
         Many(children)
       case Many(children) =>
         val index1 = (key.hashCode() >>> level) & 0x1f
-        children(index1) match {
-          case EmptyHAMT() =>
-            val newChildren = new Array[HAMT[K, V]](BRANCHING_FACTOR)
-            Array.copy(children, 0, newChildren, 0, children.length)
-            newChildren(index1) = Leaf(key, value)
-            Many(newChildren)
-
-          case hamt2 =>
-            val newChildren = new Array[HAMT[K, V]](BRANCHING_FACTOR)
-            Array.copy(children, 0, newChildren, 0, children.length)
-            newChildren(index1) = insert0(hamt2, key, value, level + 5)
-            Many(newChildren)
-        }
+        val newChildren = new Array[HAMT[K, V]](BRANCHING_FACTOR)
+        Array.copy(children, 0, newChildren, 0, children.length)
+        newChildren(index1) = insert0(children(index1), key, value, level + 5)
+        Many(newChildren)
     }
     insert0(_hamt, _key, _value, 0)
   }
